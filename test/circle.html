@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            class ball{
+                constructor(x, y, r, color, vx, vy, theta){
+                    this.x = x;
+                    this.y = y;
+                    this.r = r;
+                    this.color = color;
+                    this.vx = vx;
+                    this.vy = vy;
+                    this.theta = theta;
+                }
+            }
+            var mainCanvas, backgroundCanvas, c, ctx;
+            var canvasWidth,canvasHeight;
+            var sceneTop, sceneRight, sceneBottom, sceneLeft;
+            var interval;
+            var addTheta = 0.08;
+            var ballArr = [];
+            var ballImage = new Image();
+            ballImage.src = "picture/ball.png";
+            
+            window.onload = function(){
+                mainCanvas = document.getElementById("mainCanvas");
+                backgroundCanvas = document.getElementById("backgroundCanvas");
+                ctx = mainCanvas.getContext("2d");
+                c = backgroundCanvas.getContext("2d");
+                canvasWidth = window.innerWidth;
+                canvasHeight = window.innerHeight;
+                mainCanvas.width = canvasWidth;
+                mainCanvas.height = canvasHeight;
+                backgroundCanvas.width = canvasWidth;
+                backgroundCanvas.height = canvasHeight;
+                sceneTop = Math.floor(canvasHeight * 0.2);
+                sceneRight = Math.floor(canvasWidth * 0.75);
+                sceneBottom = Math.floor(canvasHeight * 0.7);
+                sceneLeft = Math.floor(canvasWidth * 0.25);
+                
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.3), Math.floor(canvasHeight * 0.4), 30, "red", 6, 10, 0));
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.4), Math.floor(canvasHeight * 0.5), 30, "blue", -18, 30, 0));
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.5), Math.floor(canvasHeight * 0.3), 30, "yellow", 18, -30, 0));
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.4), Math.floor(canvasHeight * 0.4), 30, "green", 30, 15, 0));
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.5), Math.floor(canvasHeight * 0.6), 30, "pink", 18, 21, 0));
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.3), Math.floor(canvasHeight * 0.25), 30, "purple", 20, -17, 0));
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.4), Math.floor(canvasHeight * 0.3), 30, "gray", -23, -20, 0));
+                ballArr.push(new ball(Math.floor(canvasWidth * 0.5), Math.floor(canvasHeight * 0.5), 30, "orange", -11, -36, 0));
+
+                drawScene();
+                drawObject();
+                
+            }
+            //draw
+            function drawScene(){
+                c.moveTo(sceneLeft, sceneTop);
+                c.lineTo(sceneRight, sceneTop);
+                c.lineTo(sceneRight, sceneBottom);
+                c.lineTo(sceneLeft, sceneBottom);
+                c.lineTo(sceneLeft, sceneTop);
+                c.stroke();
+            }
+            function drawObject(){
+                var i;
+                ctx.font="30px Georgia";
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                for(i = 0; i < ballArr.length; ++i){
+                    ctx.save();
+                    ctx.fillStyle = ballArr[i].color;
+                    ctx.beginPath();
+                    ctx.arc(ballArr[i].x, ballArr[i].y, ballArr[i].r, 0, 2*Math.PI);
+                    ctx.fill();
+
+                    ctx.translate(ballArr[i].x - ballArr[i].r * Math.cos(ballArr[i].theta),
+                                ballArr[i].y - ballArr[i].r * Math.sin(ballArr[i].theta));
+                    
+                    ctx.rotate(ballArr[i].theta*Math.PI/180);
+                    
+                    ctx.fillStyle = "black";
+                    /*ctx.fillText(i+1, ballArr[i].x - ballArr[i].r * Math.cos(ballArr[i].theta),
+                                          ballArr[i].y - ballArr[i].r * Math.sin(ballArr[i].theta));*/
+                    ctx.fillText(i+1, 0, 0);
+
+                    if((ballArr[i].x - ballArr[i].r + ballArr[i].vx < sceneLeft) || (ballArr[i].x + ballArr[i].r + ballArr[i].vx > sceneRight)){
+                    ballArr[i].vx = - ballArr[i].vx;
+                    }
+                    if((ballArr[i].y - ballArr[i].r + ballArr[i].vy < sceneTop) || (ballArr[i].y + ballArr[i].r + ballArr[i].vy > sceneBottom)){
+                        ballArr[i].vy = - ballArr[i].vy;
+                    }       
+
+                    ballArr[i].x += ballArr[i].vx;
+                    ballArr[i].y += ballArr[i].vy;
+                    ballArr[i].theta += addTheta;
+                    ctx.restore();
+                }
+                
+
+                requestAnimationFrame(drawObject);
+            }
+
+            //重力
+            function gravity(){
+                var i;
+                for(i = 0; i < ballArr.length; ++i){
+                    ballArr[i].y += 5;
+                }
+            }
+        </script>
+        <style>
+            body{
+                margin: 0;
+            }
+            canvas{
+                display: block;
+                position:absolute;
+            }
+
+        </style>
+    </head>
+    <body>
+        <canvas id="backgroundCanvas" style="z-index: 1;"></canvas>
+        <canvas id="mainCanvas" style="z-index: 2;"></canvas>
+    </body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Lotto</title>
+        <canvas id="mainCanvas"></canvas>
+        <button id="moveBtn" onclick="moveBall()">moveOn</button>
+        <button id="hookBtn" onclick="hookPower()">hookOn</button>
+        <button id="blowBtn" onclick="blow()">blowOn</button>
+        <button id="lotteryBtn" onclick="lottery()">Lottery</button>
+        <button id="testBtn" onclick="hookRotate()" >motion</button>
+
+        <script src="js/matter-js-master/build/matter.js"></script>
+        <script src="js/option.js"></script>
+        <script src="js/background.js"></script>
+        <script src="js/ball.js"></script>
+        <script src="js/hook.js"></script>
+        <script src="js/setup.js"></script>
+        <script src="js/button.js"></script>
+        <script src="js/update.js"></script>
+        <script src="js/event.js"></script>
+
+        <style>
+            body{
+                margin: 0;
+            }
+            canvas{
+                display: block;
+            }
+            button{
+                position: absolute;
+                z-index: 1;
+                font-size: 30px;
+                border-radius: 4px;
+                -webkit-transition-duration: 0.5s; /* Safari */
+                transition-duration: 0.5s;
+                cursor: pointer;
+            }
+            #moveBtn{
+                border: 3px solid #4CAF50;
+            }
+            #moveBtn:hover{
+                background: #4CAF50;
+                color: white;
+            }
+
+            #hookBtn{
+                border: 3px solid #FF7744;
+            }
+            #hookBtn:hover{
+                background: #FF7744;
+                color: white;
+            }
+
+            #blowBtn{
+                border: 3px solid #008CBA;
+            }
+            #blowBtn:hover{
+                background: #008CBA;
+                color: white;
+            }
+
+            #lotteryBtn{
+                border: 3px solid #f44336;
+            }
+            #lotteryBtn:hover{
+                background: #f44336;
+                color: white;
+            }
+
+            #testBtn{
+                border: 3px solid #9999FF;
+            }
+            #testBtn:hover{
+                background: #9999FF;
+                color: white;
+            }
+
+        </style>
+    </head>
+
+</html>

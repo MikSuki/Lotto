@@ -1,0 +1,350 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            class ball{
+                constructor(x, y, color, vx, vy){
+                    this.x = x;
+                    this.y = y;
+                    this.vx = vx;
+                    this.vy = vy;
+                    this.color = color;
+                }
+            }
+
+            var mainCanvas, backgroundCanvas, c, ctx;
+            var startBtn, stopBtn;
+            var canvasWidth,canvasHeight;
+            var sceneTop, sceneRight, sceneBottom, sceneLeft;
+            var ballArr = [];
+            var radius = 10;
+            var colliderLoss = 0.5;
+            var interval;
+            
+            window.onload = function(){
+                mainCanvas = document.getElementById("mainCanvas");
+                backgroundCanvas = document.getElementById("backgroundCanvas");
+                startBtn = document.getElementById("startBtn");
+                stopBtn = document.getElementById("stopBtn");
+                ctx = mainCanvas.getContext("2d");
+                c = backgroundCanvas.getContext("2d");
+                canvasWidth = window.innerWidth;
+                canvasHeight = window.innerHeight;
+                mainCanvas.width = canvasWidth;
+                mainCanvas.height = canvasHeight;
+                backgroundCanvas.width = canvasWidth;
+                backgroundCanvas.height = canvasHeight;
+                sceneTop = Math.floor(canvasHeight * 0.2);
+                sceneRight = Math.floor(canvasWidth * 0.75);
+                sceneBottom = Math.floor(canvasHeight * 0.7);
+                sceneLeft = Math.floor(canvasWidth * 0.25);
+                startBtn.style.left = (sceneLeft + sceneRight) * 0.4 + "px";
+                startBtn.style.top = (sceneBottom + 100) + "px";
+                stopBtn.style.left = (sceneLeft + sceneRight) * 0.5 + "px";
+                stopBtn.style.top = (sceneBottom + 100) + "px";
+                
+                //constructor
+                var j = 0;
+                var color = ["red", "blue", "yellow", "gray", "green", "black", "pink", "orange", "purple"];
+                /*for(var i = 0; i < 49; ++i){
+                    var x = sceneLeft + (1 + j) * 20;
+                    var y = sceneBottom - (1 + i / 10) * 20;
+                    ballArr.push(new ball(x, y, color[j], 2 * Math.floor(- 10 + Math.random() * 20)
+                                , 2 * Math.floor(- 10 + Math.random() * 20), 0));
+                    if(++j > 9)
+                        j = 0;
+                }*/
+
+                var k = 0;
+                for(var i = 0; i < 20; ++i){
+                    var x = sceneLeft + (1 + j) * 22;
+                    var y = sceneTop + (0.6 + k) * 20;
+                    ballArr.push(new ball(x, y, color[Math.floor(Math.random() * 9)], 0, 0));
+                    if(x > sceneRight - 30){
+                        j = 0;
+                        ++k;
+                    }
+                    else
+                        ++j;
+                }
+
+                //ballArr.push(new ball(sceneLeft + 100, Math.floor(canvasHeight * 0.4), color[0], 10, 0));
+                //ballArr.push(new ball(sceneLeft + 200, Math.floor(canvasHeight * 0.4), color[1], 2, 10));
+                
+                //-------------------左右-----------------------
+                // 正面 互撞
+                //ballArr.push(new ball(sceneLeft + 100, Math.floor(canvasHeight * 0.4), color[0], 7, 0));
+                //ballArr.push(new ball(sceneLeft + 400, Math.floor(canvasHeight * 0.4), color[1], -7, 0));
+                // 正面 A不動
+                //ballArr.push(new ball(sceneLeft + 100, Math.floor(canvasHeight * 0.4), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 400, Math.floor(canvasHeight * 0.4), color[1], -7, 0));
+                // 正面 B不動
+                //ballArr.push(new ball(sceneLeft + 100, Math.floor(canvasHeight * 0.4), color[0], 7, 0));
+                //ballArr.push(new ball(sceneLeft + 400, Math.floor(canvasHeight * 0.4), color[1], 0, 0));
+                //擦撞
+                //ballArr.push(new ball(sceneLeft + 150, Math.floor(canvasHeight * 0.43), color[0], 5, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.4), color[1], -5, 0));
+                //擦撞 A不動
+                //ballArr.push(new ball(sceneLeft + 150, Math.floor(canvasHeight * 0.4), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.43), color[1], -5, 0));
+                //擦撞 B不動
+                //ballArr.push(new ball(sceneLeft + 150, Math.floor(canvasHeight * 0.43), color[0], 5, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.4), color[1], 0, 0));
+                
+                
+                //-------------------上下-----------------------
+                // 正面
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                //正面 A不動
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                //正面 B不動  
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                // 擦撞
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 310, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                // 擦撞 A不動
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 310, Math.floor(canvasHeight * 0.5), color[1], 0, -7));
+                // 擦撞 B不動
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 310, Math.floor(canvasHeight * 0.5), color[1], 0, 0));
+
+
+                //-------------------45度-----------------------
+                //ballArr.push(new ball(sceneLeft + 100, screenTop + 500, color[0], 5, -5));
+                //ballArr.push(new ball(sceneLeft + 300, screenTop + 300, color[1], -5, 5));
+                //ballArr.push(new ball(sceneLeft + 301, screenTop + 300, color[0], -5, 5));
+                //ballArr.push(new ball(sceneLeft + 100, screenTop + 500, color[1], 5, -5));
+                
+                
+                drawScene();
+                drawObject();
+            }
+            //draw
+            function drawScene(){
+                c.moveTo(sceneLeft, sceneTop);
+                c.lineTo(sceneRight, sceneTop);
+                c.lineTo(sceneRight, sceneBottom);
+                c.lineTo(sceneLeft, sceneBottom);
+                c.lineTo(sceneLeft, sceneTop);
+                c.stroke();
+            }
+            function drawObject(){
+                var i;
+                ctx.font="20px Georgia";
+                ctx.clearRect(sceneLeft, sceneTop, sceneRight, sceneBottom);
+                for(i = 0; i < ballArr.length; ++i){
+                    //ctx.fillStyle = "yellow";
+                    ctx.fillStyle = ballArr[i].color;
+                    ctx.beginPath();
+                    //circle
+                    ctx.arc(ballArr[i].x, ballArr[i].y, 10, 0, 2 * Math.PI);
+                    ctx.fill();
+                    //text
+                    ctx.fillStyle = "black";
+                    //ctx.fillText(i+1, ballArr[i].x, ballArr[i].y);
+
+                    if((ballArr[i].x - radius + ballArr[i].vx < sceneLeft) || (ballArr[i].x + radius + ballArr[i].vx > sceneRight)){
+                    ballArr[i].vx = - colliderLoss * ballArr[i].vx;
+                    }
+                    if((ballArr[i].y - radius + ballArr[i].vy < sceneTop) || (ballArr[i].y + radius + ballArr[i].vy > sceneBottom)){
+                        ballArr[i].vy = - colliderLoss * ballArr[i].vy;
+                    }  
+
+                    //ball move
+                    ballArr[i].x += ballArr[i].vx;
+                    ballArr[i].y += ballArr[i].vy;
+
+                    //gravity
+                    if (ballArr[i].y < (sceneBottom - radius + 2))
+                        ballArr[i].vy += 0.1;
+
+                    for (var j = i; j < ballArr.length; ++j)
+                        for (var k = 0; k < ballArr.length; ++k) {
+                            if (k == j)
+                                continue;
+                            if (Math.sqrt(Math.pow(ballArr[j].x + ballArr[j].vx - ballArr[k].x - ballArr[k].vx, 2) +
+                                Math.pow(ballArr[j].y + ballArr[j].vy - ballArr[k].y - ballArr[k].vy, 2)) <= 2 * radius) {
+
+                                var aX = ballArr[j].vx;
+                                var aY = ballArr[j].vy;
+                                var bX = ballArr[k].vx;
+                                var bY = ballArr[k].vy;
+                                var aMagnitude = Math.sqrt(Math.pow(aX, 2) + Math.pow(aY, 2));
+                                var bMagnitude = Math.sqrt(Math.pow(bX, 2) + Math.pow(bY, 2));
+                                var dot = aX * bX + aY * bY;
+
+                                var lineX = ballArr[k].x - ballArr[j].x;
+                                var lineY = ballArr[k].y - ballArr[j].y;
+                                var lineMagnitude = Math.sqrt(Math.pow(lineX, 2) + Math.pow(lineY, 2));
+                                var cosTheta = lineX / lineMagnitude;
+                                var sinTheta = lineY / lineMagnitude;
+                                var aCos = aX / aMagnitude;
+                                var aSin = aY / aMagnitude;
+                                var bCos = bX / bMagnitude;
+                                var bSin = bY / bMagnitude;
+
+                                if (Math.abs(aCos) == Math.abs(cosTheta) && Math.abs(aSin) == Math.abs(sinTheta)) {
+                                    var aVertical = 0;
+                                    var aHorizontal = aMagnitude;
+                                }
+                                else {
+                                    var aVertical = aMagnitude * sinTheta;
+                                    var aHorizontal = aMagnitude * cosTheta;
+                                }
+
+                                if (Math.abs(bCos) == Math.abs(cosTheta) && Math.abs(bSin) == Math.abs(sinTheta)) {
+                                    var bVertical = 0;
+                                    var bHorizontal = - bMagnitude;
+                                }
+                                else {
+                                    var bVertical = - bMagnitude * sinTheta;
+                                    var bHorizontal = - bMagnitude * cosTheta;
+                                }
+
+                                ballArr[j].vx = aVertical * sinTheta + colliderLoss * bHorizontal * cosTheta;
+                                ballArr[j].vy = - aVertical * cosTheta + colliderLoss * bHorizontal * sinTheta;
+                                ballArr[k].vx = colliderLoss * aHorizontal * cosTheta + bVertical * sinTheta;
+                                ballArr[k].vy = colliderLoss * aHorizontal * sinTheta - bVertical * cosTheta;
+
+
+                                /*console.log("aCos : " + aCos);
+                                console.log("aSin : " + aSin);
+                                console.log("bCos : " + bCos);
+                                console.log("bSin : " + bSin);
+                                console.log("lineX : " + lineX);
+                                console.log("lineY : " + lineY);
+                                console.log("lineMagnitude : " + lineMagnitude);
+                                console.log("cosTheta : " + cosTheta);
+                                console.log("sinTheta : " + sinTheta);
+                                console.log("aVertical : " + aVertical);
+                                console.log("aHorizontal : " + aHorizontal);
+                                console.log("bVertical : " + bVertical);
+                                console.log("bHorizontal : " + bHorizontal);*/
+
+                            }
+                        }
+                }
+                
+                requestAnimationFrame(drawObject);
+            }
+            //物理
+            function physical(){
+                //force();
+                gravity();
+                //collider();
+            }
+            //重力
+            function gravity(){
+                var i;
+                for (i = 0; i < ballArr.length; ++i) {
+                    if (ballArr[i].y < (sceneBottom - radius + 2))
+                        ballArr[i].vy += 0.1;
+                }
+            }
+            function colliderBall(){
+                var i;
+                for(i = 0; i < ballArr.length; ++i){
+                    for(j = i; j < ballArr.length; ++j){
+                        if(Math.sqrt(Math.pow(ballArr[i].x - ballArr[j].x), 2) + 
+                          (Math.pow(ballArr[i].y - ballArr[j].y), 2) < 20)
+                            console.log("collider");
+                    }
+                }
+            }
+            //碰撞
+            function collider(){
+                var i;
+                var top;
+                var bottom;
+                var left;
+                var right;
+                for(i = 0; i < ballArr.length; ++i){
+                    if(ballArr[i].touchWall)
+                        break;
+                    top = ballArr[i].y - ballArr[i].height / 2;
+                    bottom = ballArr[i].y + ballArr[i].height / 2;
+                    left = ballArr[i].x - ballArr[i].width / 2;
+                    right = ballArr[i].x + ballArr[i].width / 2;
+                    if(top <= sceneTop + 5){
+                        ballArr[i].forceX = -10 + Math.floor(Math.random() * 20);
+                        ballArr[i].forceY = 5 + 1 * Math.floor(Math.random() * 5);
+                        //console.log("forceX : "+ ballArr[i].forceX);
+                        //console.log("forceY : "+ ballArr[i].forceY);
+                        //ballArr[i].touchWall = true;
+                        //setTimeout(function(){ballArr[0].touchWall = false;}, 200);
+                    }
+                    else if(bottom >= sceneBottom - 15){
+                        /*var degree = 180 - Math.random() * 180;
+                        ballArr[i].forceX = 10 * Math.cos(Math.PI / 180 * degree);
+                        ballArr[i].forceY = -10 * Math.sin(Math.PI / 180 * degree);*/
+                        ballArr[i].forceX = -10 + Math.floor(Math.random() * 20);
+                        ballArr[i].forceY = -10 - 1 * Math.floor(Math.random() * 5);
+                        //console.log("forceX : "+ ballArr[i].forceX);
+                        //console.log("forceY : "+ ballArr[i].forceY);
+                        //ballArr[i].touchWall = true;
+                        //setTimeout(function(){ballArr[0].touchWall = false;}, 200);
+                    }
+                    else if(left <= sceneLeft + 5){
+                        ballArr[i].forceX = Math.floor(Math.random() * 10);
+                        if(Math.floor(Math.random() * 1) == 0)
+                            ballArr[i].forceY = -10 - 1 * Math.floor(Math.random() * 5);
+                        else    
+                        ballArr[i].forceY = 5 + 1 * Math.floor(Math.random() * 5);
+                        //console.log("forceX : "+ ballArr[i].forceX);
+                        //console.log("forceY : "+ ballArr[i].forceY);
+                        //ballArr[i].touchWall = true;
+                        //setTimeout(function(){ballArr[0].touchWall = false;}, 200);
+                    }
+                    else if(right >= sceneRight - 5){
+                        ballArr[i].forceX = -1 * Math.floor(Math.random() * 10);
+                        if(Math.floor(Math.random() * 1) == 0)
+                            ballArr[i].forceY = -10 - 1 * Math.floor(Math.random() * 5);
+                        else    
+                            ballArr[i].forceY = 5 + 1 * Math.floor(Math.random() * 5);
+                        //console.log("forceX : "+ ballArr[i].forceX);
+                        //console.log("forceY : "+ ballArr[i].forceY);
+                        //ballArr[i].touchWall = true;
+                        //setTimeout(function(){ballArr[0].touchWall = false;}, 200);
+                    }
+
+                }
+            }
+            //Button function
+            function addForce(){
+            }
+            function clearForce(){
+                for (i = 0; i < ballArr.length; ++i) {
+                    if(ballArr[i].y < sceneBottom * 0.8)
+                        console.log(ballArr[i].vy);
+                }
+            }
+
+
+        </script>
+        <style>
+            body{
+                margin: 0;
+            }
+            canvas{
+                display: block;
+                position:absolute;
+            }
+            button{
+                position: absolute;
+                z-index: 3;
+                font-size: 30px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <canvas id="backgroundCanvas" style="z-index: 1;"></canvas>
+        <canvas id="mainCanvas" style="z-index: 2;"></canvas>
+        <button id="startBtn" onclick="addForce()">start</button>
+        <button id="stopBtn" onclick="clearForce()">stop</button>
+    </body>
+</html>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            class ball{
+                constructor(x, y, color, vx, vy){
+                    this.x = x;
+                    this.y = y;
+                    this.vx = vx;
+                    this.vy = vy;
+                    this.color = color;
+                }
+            }
+            
+            var mainCanvas, backgroundCanvas, c, ctx;
+            var canvasWidth,canvasHeight;
+            var sceneTop, sceneRight, sceneBottom, sceneLeft;
+            var ballArr = [];
+            
+            window.onload = function(){
+                mainCanvas = document.getElementById("mainCanvas");
+                backgroundCanvas = document.getElementById("backgroundCanvas");
+                ctx = mainCanvas.getContext("2d");
+                c = backgroundCanvas.getContext("2d");
+                canvasWidth = window.innerWidth;
+                canvasHeight = window.innerHeight;
+                mainCanvas.width = canvasWidth;
+                mainCanvas.height = canvasHeight;
+                backgroundCanvas.width = canvasWidth;
+                backgroundCanvas.height = canvasHeight;
+                sceneTop = Math.floor(canvasHeight * 0.2);
+                sceneRight = Math.floor(canvasWidth * 0.75);
+                sceneBottom = Math.floor(canvasHeight * 0.7);
+                sceneLeft = Math.floor(canvasWidth * 0.25);
+                
+                //constructor
+                var j = 0;
+                var color = ["red", "blue", "yellow", "gray", "green", "black", "pink", "orange", "purple"];
+                
+                /*for(var i = 0; i < 10; ++i){
+                    var x = sceneLeft + (1 + j) * 20;
+                    var y = sceneBottom - (1 + i / 10) * 20;
+                    ballArr.push(new ball(x, y, color[j], 2 * Math.floor(- 10 + Math.random() * 20)
+                                , 2 * Math.floor(- 10 + Math.random() * 20), 0));
+                    if(++j > 9)
+                        j = 0;
+                }*/
+
+                //-------------------左右-----------------------
+                // 正面 互撞
+                ballArr.push(new ball(sceneLeft + 100, Math.floor(canvasHeight * 0.4), color[0], 7, 0));
+                ballArr.push(new ball(sceneLeft + 400, Math.floor(canvasHeight * 0.4), color[1], -7, 0));
+                // 正面 A不動
+                //ballArr.push(new ball(sceneLeft + 100, Math.floor(canvasHeight * 0.4), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 400, Math.floor(canvasHeight * 0.4), color[1], -7, 0));
+                // 正面 B不動
+                //ballArr.push(new ball(sceneLeft + 100, Math.floor(canvasHeight * 0.4), color[0], 7, 0));
+                //ballArr.push(new ball(sceneLeft + 400, Math.floor(canvasHeight * 0.4), color[1], 0, 0));
+                //擦撞
+                //ballArr.push(new ball(sceneLeft + 150, Math.floor(canvasHeight * 0.43), color[0], 5, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.4), color[1], -5, 0));
+                //擦撞 A不動
+                //ballArr.push(new ball(sceneLeft + 150, Math.floor(canvasHeight * 0.4), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.43), color[1], -5, 0));
+                //擦撞 B不動
+                //ballArr.push(new ball(sceneLeft + 150, Math.floor(canvasHeight * 0.43), color[0], 5, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.4), color[1], 0, 0));
+                
+                
+                //-------------------上下-----------------------
+                // 正面
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                //正面 A不動
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                //正面 B不動  
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                // 擦撞
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 310, Math.floor(canvasHeight * 0.6), color[1], 0, -7));
+                // 擦撞 A不動
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 0));
+                //ballArr.push(new ball(sceneLeft + 310, Math.floor(canvasHeight * 0.5), color[1], 0, -7));
+                // 擦撞 B不動
+                //ballArr.push(new ball(sceneLeft + 300, Math.floor(canvasHeight * 0.3), color[0], 0, 7));
+                //ballArr.push(new ball(sceneLeft + 310, Math.floor(canvasHeight * 0.5), color[1], 0, 0));
+
+
+                //-------------------45度-----------------------
+                //ballArr.push(new ball(sceneLeft + 100, screenTop + 500, color[0], 5, -5));
+                //ballArr.push(new ball(sceneLeft + 300, screenTop + 300, color[1], -5, 5));
+                //ballArr.push(new ball(sceneLeft + 301, screenTop + 300, color[0], -5, 5));
+                //ballArr.push(new ball(sceneLeft + 100, screenTop + 500, color[1], 5, -5));
+                
+                
+                drawScene();
+                drawObject();
+            }
+            //draw
+            function drawScene(){
+                c.moveTo(sceneLeft, sceneTop);
+                c.lineTo(sceneRight, sceneTop);
+                c.lineTo(sceneRight, sceneBottom);
+                c.lineTo(sceneLeft, sceneBottom);
+                c.lineTo(sceneLeft, sceneTop);
+                c.stroke();
+            }
+            function drawObject(){
+                var i;
+                ctx.clearRect(sceneLeft, sceneTop, sceneRight, sceneBottom);
+                for(i = 0; i < ballArr.length; ++i){
+                    ctx.fillStyle = ballArr[i].color;
+                    ctx.beginPath();
+                    //circle
+                    ctx.arc(ballArr[i].x, ballArr[i].y, 20, 0, 2 * Math.PI);
+                    ctx.fill();
+
+                    if((ballArr[i].x - 20 + ballArr[i].vx < sceneLeft) || (ballArr[i].x + 20 + ballArr[i].vx > sceneRight)){
+                    ballArr[i].vx = - ballArr[i].vx;
+                    }
+                    if((ballArr[i].y - 20 + ballArr[i].vy < sceneTop) || (ballArr[i].y + 20 + ballArr[i].vy > sceneBottom)){
+                        ballArr[i].vy = - ballArr[i].vy;
+                    }  
+
+                    //ball move
+                    ballArr[i].x += ballArr[i].vx;
+                    ballArr[i].y += ballArr[i].vy;
+
+                    for (var j = i + 1; j < ballArr.length; ++j) {
+                        if (Math.sqrt(Math.pow(ballArr[i].x + ballArr[i].vx - ballArr[j].x - ballArr[j].vx, 2) +
+                             Math.pow(ballArr[i].y + ballArr[i].vy - ballArr[j].y - ballArr[j].vy, 2)) <= 40) {
+                            
+                            var aX = ballArr[i].vx;
+                            var aY = ballArr[i].vy;
+                            var bX = ballArr[j].vx;
+                            var bY = ballArr[j].vy;
+                            var aMagnitude = Math.sqrt(Math.pow(aX, 2) + Math.pow(aY, 2));
+                            var bMagnitude = Math.sqrt(Math.pow(bX, 2) + Math.pow(bY, 2));
+                            var dot = aX * bX + aY * bY;
+
+                            var lineX = ballArr[j].x - ballArr[i].x;
+                            var lineY = ballArr[j].y - ballArr[i].y;
+                            var lineMagnitude = Math.sqrt(Math.pow(lineX, 2) + Math.pow(lineY, 2));
+                            var cosTheta = lineX / lineMagnitude;
+                            var sinTheta = lineY / lineMagnitude;
+                            var aCos = aX / aMagnitude;
+                            var aSin = aY / aMagnitude;
+                            var bCos = bX / bMagnitude;
+                            var bSin = bY / bMagnitude;
+
+                            if(Math.abs(aCos) == Math.abs(cosTheta) && Math.abs(aSin) == Math.abs(sinTheta)){
+                                var aVertical = 0;
+                                var aHorizontal = aMagnitude;
+                            }
+                            else{
+                                var aVertical = aMagnitude * sinTheta;
+                                var aHorizontal = aMagnitude * cosTheta;
+                            }
+
+                            if(Math.abs(bCos) == Math.abs(cosTheta) && Math.abs(bSin) == Math.abs(sinTheta)){
+                                var bVertical = 0;
+                                var bHorizontal = - bMagnitude;
+                            }
+                            else{
+                                var bVertical = - bMagnitude * sinTheta;
+                                var bHorizontal = - bMagnitude * cosTheta;
+                            }
+
+                            ballArr[i].vx = aVertical * sinTheta + bHorizontal * cosTheta;
+                            ballArr[i].vy = - aVertical * cosTheta + bHorizontal * sinTheta;
+                            ballArr[j].vx = aHorizontal * cosTheta + bVertical * sinTheta;
+                            ballArr[j].vy = aHorizontal * sinTheta - bVertical * cosTheta ;
+
+                            console.log("aCos : " + aCos);
+                            console.log("aSin : " + aSin);
+                            console.log("bCos : " + bCos);
+                            console.log("bSin : " + bSin);
+                            console.log("lineX : " + lineX);
+                            console.log("lineY : " + lineY);
+                            console.log("lineMagnitude : " + lineMagnitude);
+                            console.log("cosTheta : " + cosTheta);
+                            console.log("sinTheta : " + sinTheta);
+                            console.log("aVertical : " + aVertical);
+                            console.log("aHorizontal : " + aHorizontal);
+                            console.log("bVertical : " + bVertical);
+                            console.log("bHorizontal : " + bHorizontal);
+                        }
+                    }
+                }
+                requestAnimationFrame(drawObject);
+            }
+
+        </script>
+        <style>
+            body{
+                margin: 0;
+            }
+            canvas{
+                display: block;
+                position:absolute;
+            }
+
+        </style>
+    </head>
+    <body>
+        <canvas id="backgroundCanvas" style="z-index: 1;"></canvas>
+        <canvas id="mainCanvas" style="z-index: 2;"></canvas>
+    </body>
+</html>

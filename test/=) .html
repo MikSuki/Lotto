@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            class ball{
+                constructor(x, y, width, height, forceX, forceY, color, touchWall){
+                    this.x = x;
+                    this.y = y;
+                    this.width = width;
+                    this.height = height;
+                    this.forceX = forceX;
+                    this.forceY = forceY;
+                    this.color = color;
+                    this.touchWall = touchWall;
+                }
+            }
+            
+            var mainCanvas, backgroundCanvas, c, ctx;
+            var canvasWidth,canvasHeight;
+            var sceneTop, sceneRight, sceneBottom, sceneLeft;
+            var ballArr = [];
+            var ballA;
+            var interval;
+            
+            window.onload = function(){
+                mainCanvas = document.getElementById("mainCanvas");
+                backgroundCanvas = document.getElementById("backgroundCanvas");
+                ctx = mainCanvas.getContext("2d");
+                c = backgroundCanvas.getContext("2d");
+                canvasWidth = window.innerWidth;
+                canvasHeight = window.innerHeight;
+                mainCanvas.width = canvasWidth;
+                mainCanvas.height = canvasHeight;
+                backgroundCanvas.width = canvasWidth;
+                backgroundCanvas.height = canvasHeight;
+                sceneTop = Math.floor(canvasHeight * 0.2);
+                sceneRight = Math.floor(canvasWidth * 0.75);
+                sceneBottom = Math.floor(canvasHeight * 0.7);
+                sceneLeft = Math.floor(canvasWidth * 0.25);
+
+                ballA = new ball(Math.floor(canvasWidth * 0.3), Math.floor(canvasHeight * 0.5), 30, 30, 0, 0, "red", false);
+                ballB = new ball(Math.floor(canvasWidth * 0.4), Math.floor(canvasHeight * 0.5), 30, 30, 0, 0, "green", false);
+                ballC = new ball(Math.floor(canvasWidth * 0.5), Math.floor(canvasHeight * 0.5), 30, 30, 0, 0, "yellow", false);
+                ballD = new ball(Math.floor(canvasWidth * 0.6), Math.floor(canvasHeight * 0.5), 30, 30, 0, 0, "blue", false);
+                ballE = new ball(Math.floor(canvasWidth * 0.3), Math.floor(canvasHeight * 0.6), 30, 30, 0, 0, "gray", false);
+                ballF = new ball(Math.floor(canvasWidth * 0.4), Math.floor(canvasHeight * 0.6), 30, 30, 0, 0, "purple", false);
+                ballG = new ball(Math.floor(canvasWidth * 0.5), Math.floor(canvasHeight * 0.6), 30, 30, 0, 0, "orange", false);
+                ballH = new ball(Math.floor(canvasWidth * 0.6), Math.floor(canvasHeight * 0.6), 30, 30, 0, 0, "pink", false);
+                ballArr.push(ballA);
+                ballArr.push(ballB);
+                ballArr.push(ballC);
+                ballArr.push(ballD);
+                ballArr.push(ballE);
+                ballArr.push(ballF);
+                ballArr.push(ballG);
+                ballArr.push(ballH);
+                drawScene();
+                drawObject();
+                
+                interval = setInterval(physical, 5);
+            }
+            //draw
+            function drawScene(){
+                c.moveTo(sceneLeft, sceneTop);
+                c.lineTo(sceneRight, sceneTop);
+                c.lineTo(sceneRight, sceneBottom);
+                c.lineTo(sceneLeft, sceneBottom);
+                c.lineTo(sceneLeft, sceneTop);
+                c.stroke();
+            }
+            function drawObject(){
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                var i;
+                for(i = 0; i < ballArr.length; ++i){
+                    ctx.fillStyle = ballArr[i].color;
+                    ctx.fillRect(ballArr[i].x, ballArr[i].y, ballArr[i].width, ballArr[i].height);
+                }
+
+                requestAnimationFrame(drawObject);
+            }
+            //物理
+            function physical(){
+                force();
+                gravity();
+                collider();
+            }
+            //重力
+            function gravity(){
+                var i;
+                for(i = 0; i < ballArr.length; ++i){
+                    ballArr[i].y += 5;
+                }
+            }
+            //碰撞
+            function collider(){
+                var i;
+                var top;
+                var bottom;
+                var left;
+                var right;
+                for(i = 0; i < ballArr.length; ++i){
+                    if(ballArr[i].touchWall)
+                        break;
+                    top = ballArr[i].y;
+                    bottom = ballArr[i].y + ballArr[i].height;
+                    left = ballArr[i].x;
+                    right = ballArr[i].x + ballArr[i].width;
+                    if(top <= sceneTop){
+                        ballArr[i].forceX = -10 + Math.floor(Math.random() * 20);
+                        ballArr[i].forceY = 5 + 1 * Math.floor(Math.random() * 5);
+                    }
+                    else if(bottom >= sceneBottom){
+                        ballArr[i].forceX = -10 + Math.floor(Math.random() * 20);
+                        ballArr[i].forceY = -10 - 1 * Math.floor(Math.random() * 5);
+                    }
+                    else if(left <= sceneLeft){
+                        ballArr[i].forceX = Math.floor(Math.random() * 10);
+                        if(Math.floor(Math.random() * 1) == 0)
+                            ballArr[i].forceY = -10 - 1 * Math.floor(Math.random() * 5);
+                        else    
+                        ballArr[i].forceY = 5 + 1 * Math.floor(Math.random() * 5);
+                    }
+                    else if(right >= sceneRight){
+                        ballArr[i].forceX = -1 * Math.floor(Math.random() * 10);
+                        if(Math.floor(Math.random() * 1) == 0)
+                            ballArr[i].forceY = -10 - 1 * Math.floor(Math.random() * 5);
+                        else    
+                            ballArr[i].forceY = 5 + 1 * Math.floor(Math.random() * 5);
+                    }
+
+                }
+            }
+            //受力
+            function force(){
+                var i;
+                for(i = 0; i < ballArr.length; ++i){
+                    ballArr[i].x += ballArr[i].forceX;
+                    ballArr[i].y += ballArr[i].forceY;
+                }
+            }
+            
+        </script>
+        <style>
+            body{
+                margin: 0;
+            }
+            canvas{
+                display: block;
+                position:absolute;
+            }
+
+        </style>
+    </head>
+    <body>
+        <canvas id="backgroundCanvas" style="z-index: 1;"></canvas>
+        <canvas id="mainCanvas" style="z-index: 2;"></canvas>
+    </body>
+</html>
